@@ -1,3 +1,4 @@
 .idea
-/generatedEntities
+/generatedEntities/*
+!generatedEntities/.gitkeep
 /data
