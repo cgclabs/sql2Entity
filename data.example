@@ -1,0 +1,6 @@
+id varchar(25) not null,
+     local for column location     numeric(2, 0) not null ,
+     job for column jobnbr     numeric(6, 0) not null ,
+     type char(1) ccsid 37 not null default 'S' ,
+     ship for column dateship date not null default current_date ,
+     updated timestamp default null,
