@@ -10,15 +10,15 @@ include 'TabletoEntity.php';
 print "File to convert:";
 $file = trim(fgets(STDIN));
 
-print "Entity name:";
-$entityName = trim(fgets(STDIN));
+print "Verbose Mode (0 or 1 for now):";
+$verboseMode = trim(fgets(STDIN));
 
-$converter = new TabletoEntity($file,$entityName);
+$converter = new TabletoEntity($file,$verboseMode);
 
-$output = $converter->generateEntity();
+$converter->generateEntity();
 
-if($converter->writeEntityFile($output,$entityName))
-{
-    echo "SUCCESS!";
-}
-else echo "File Write Failed";
+//if($converter->writeEntityFile($output,$entityName))
+//{
+//    echo "SUCCESS!";
+//}
+//else echo "File Write Failed";

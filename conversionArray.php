@@ -12,5 +12,7 @@ return $conversions = array(
         'varchar' => 'string',
         'char' => 'string',
         'numeric' => 'integer',
-        'timestamp' => 'datetime'
+        'timestamp' => 'datetime',
+        'decimal' => 'decimal',
+        'text' => 'text'
 );
