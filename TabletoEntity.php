@@ -18,15 +18,16 @@ class TabletoEntity
     protected $entityName;
     protected $tableName;
     protected $tableSchema;
+    protected $path;
 
-    public function __construct($sqlinput, $verboseMode)
+    public function __construct($sqlinput, $verboseMode,$path)
     {
         $this->sqlinput = $sqlinput;
         $this->conversions = include 'conversionArray.php';
         $this->template = 'entityTemplate';
         $this->entityName = '';
         $this->verboseMode = $verboseMode;
-
+        $this->path = $path;
     }
 
     public function generateEntity()
@@ -179,8 +180,7 @@ class TabletoEntity
 
     public function writeEntityFile()
     {
-        $path = 'generatedEntities/';
-        $entityName = $path.$this->entityName.'.php';
+        $entityName = $this->path.$this->entityName.'.php';
         $entityFile = fopen($entityName, "w") or die("Unable to open file!");
         fwrite($entityFile, $this->phpFile);
         fclose($entityFile);
