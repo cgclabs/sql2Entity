@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /**
  * Author: Roger Creasy
@@ -6,19 +7,43 @@
  * Time: 2:54 PM
  */
 
-include 'TabletoEntity.php';
-print "File to convert:";
-$file = trim(fgets(STDIN));
+if (in_array('-h', $argv) || in_array('--help', $argv))
+{
+    ?>
 
-print "Verbose Mode (0 or 1 for now):";
-$verboseMode = trim(fgets(STDIN));
+    This is a command line PHP script that will create doctrine entity file(s) based on SQL.
 
-$converter = new TabletoEntity($file,$verboseMode);
+      Usage:
+      <?php echo $argv[0]; ?> <sql file> <output folder (optional)> <options>
 
-$converter->generateEntity();
+      <options> can be -v for verbose mode. With the --help or -h options, you will get this help.
 
-//if($converter->writeEntityFile($output,$entityName))
-//{
-//    echo "SUCCESS!";
-//}
-//else echo "File Write Failed";
+    <?php
+}
+else
+{
+    $verboseeMode = 0;
+    $output = 'generatedEntities/'; 
+
+    if (isset($argv[1]))
+    {
+        $file = $argv[1];
+        if (isset($argv[2]) && $argv[2] != '-v')
+        {
+            $output = $argv[2];
+        }
+
+        if (in_array('-v', $argv))
+        {
+            $verboseMode = 1; 
+        }
+
+        include 'TabletoEntity.php';
+        $converter = new TabletoEntity($file,$verboseMode,$output);
+        $converter->generateEntity();
+    }
+    else
+    {
+        echo "\nNo SQL file specified\n";
+    }
+}
