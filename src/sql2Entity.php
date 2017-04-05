@@ -1,14 +1,8 @@
 <?php
-
-/**
- * Author: Roger Creasy
- * Email: roger@rogercreasy.com
- * Date: 1/25/17
- * Time: 2:46 PM
- */
+namespace CGCLabs\sql2Entity;
 
 
-class TabletoEntity
+class sql2Entity
 {
     protected $sqlinput;
     protected $fieldLine;
