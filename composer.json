@@ -1,0 +1,24 @@
+{
+    "name": "cgclabs/sql2Entity",
+    "description": "Converts SQL file to Laravel Doctrine Entity files",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Roger Creasy",
+            "email": "roger.creasy@gmail.com"
+        },
+        {
+            "name": "Mike Clark",
+            "email": "mike@mike-clark.org"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "5.7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "CGCLabs\\sql2Entity\\": "src"
+        }
+    }
+}

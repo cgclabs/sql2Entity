@@ -1,11 +1,7 @@
 #!/usr/bin/php
 <?php
-/**
- * Author: Roger Creasy
- * Email: roger@rogercreasy.com
- * Date: 1/25/17
- * Time: 2:54 PM
- */
+require __DIR__ . '/vendor/autoload.php';
+use CGCLabs\sql2Entity\sql2Entity;
 
 if (in_array('-h', $argv) || in_array('--help', $argv))
 {
@@ -38,8 +34,7 @@ else
             $verboseMode = 1; 
         }
 
-        include 'TabletoEntity.php';
-        $converter = new TabletoEntity($file,$verboseMode,$output);
+        $converter = new sql2Entity($file,$verboseMode,$output);
         $converter->generateEntity();
     }
     else

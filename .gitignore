@@ -3,3 +3,5 @@
 /generatedEntities/*
 !generatedEntities/.gitkeep
 /data
+/vendor
+composer.lock
