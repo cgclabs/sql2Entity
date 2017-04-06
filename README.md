@@ -1,5 +1,5 @@
 # sql2Entity
-CLI PHP to convert a SQL create table statement to a Doctrine Entity class. Written to work with Laravel-Doctrine. May work outside of Laravel, but untested.
+CLI PHP script to convert an SQL file with create table statements to a Doctrine Entity class(es). Written to work with Laravel-Doctrine. May work outside of Laravel, but untested.
 
 ### Usage ###
 ```
