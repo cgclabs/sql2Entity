@@ -1,25 +1,30 @@
 <?php
 namespace CGCLabs\sql2Entity;
 
-
 class sql2Entity
 {
     protected $sqlinput;
-    protected $fieldLine;
     protected $phpFile;
-    protected $conversions;
-    protected $template;
-    protected $entityName;
+    protected $template = 'entityTemplate';
+    protected $entityName = '';
     protected $tableName;
     protected $tableSchema;
     protected $path;
+    protected $fieldLine = array();
+
+
+    protected $conversions = array(
+        'varchar' => 'string',
+        'char' => 'string',
+        'numeric' => 'integer',
+        'timestamp' => 'datetime',
+        'decimal' => 'decimal',
+        'text' => 'text'
+    );
 
     public function __construct($sqlinput, $verboseMode,$path)
     {
         $this->sqlinput = $sqlinput;
-        $this->conversions = include 'conversionArray.php';
-        $this->template = 'entityTemplate';
-        $this->entityName = '';
         $this->verboseMode = $verboseMode;
         $this->path = $path;
     }
@@ -28,8 +33,6 @@ class sql2Entity
     {
         $fp = fopen($this->sqlinput, 'r') or die("Unable to open file!");
         $file = fread($fp, filesize($this->sqlinput));
-
-        //$file = $this->doctrineTypeConversion($file);
 
         $this->checkForMultipleTables($file);
         fclose($fp);
@@ -52,43 +55,53 @@ class sql2Entity
             {
                 echo "Processing Table #".$x.":\n";
             }
-            preg_match_all("/(.*)^[^\(]*/",$table,$name_matches);
-            $the_name = strtoupper($name_matches[0][0]);
-            $the_name = str_replace('CREATE TABLE','',$the_name);
-            $the_name = trim($the_name);
-            $pieces = explode('.',$the_name);
-            if (count($pieces) == 2)
-            {
-                $this->tableName = $pieces[1];
-                $this->tableSchema = $pieces[0];
-            }
-            else
-            {
-                $this->tableName = $pieces[0];
-            }
 
-            $this->entityName = str_replace(array('_',' '), '', ucwords(strtolower($this->tableName), '_'));
+            $this->findTableInfo($table);
+
             if ($this->verboseMode)
             {
                 echo "\ttableName: " . $this->tableName . "\n";
                 echo "\ttableSchema: " . $this->tableSchema . "\n";
                 echo "\tentityName: " . $this->entityName . "\n";
             }
-            $this->fieldLine = array();
             $this->arrayFromInput($table);
         }
     }
 
+    private function findTableInfo($table_sql)
+    {
+        preg_match_all("/(.*)^[^\(]*/",$table_sql,$name_matches);
+        $the_name = strtoupper($name_matches[0][0]);
+        $the_name = str_replace('CREATE TABLE','',$the_name);
+        $the_name = trim($the_name);
+        $pieces = explode('.',$the_name);
+        if (count($pieces) == 2)
+        {
+            $this->tableName = $pieces[1];
+            $this->tableSchema = $pieces[0];
+        }
+        else
+        {
+            $this->tableName = $pieces[0];
+        }
+
+        $this->entityName = str_replace(array('_',' '), '', ucwords(strtolower($this->tableName), '_'));
+    }
+
+    private function cleanTable($table_sql)
+    {
+        // Remove line endings
+        $table_sql = preg_replace("/\n|\r\n?/", "", $table_sql);
+        // Remove Create table portion - up to first (
+        $table_sql = preg_replace("/^[^\(]+/", "", $table_sql);
+        // Remove first and last parenthesis
+        $table_sql = trim($table_sql, "()");
+        return $table_sql;
+    }
+
     private function arrayFromInput($file)
     {
-        //$file = str_replace("\n\r", "\n", $file);
-        //$dataArray = explode(",\n", $file);
-        // Remove line endings
-        $file = preg_replace("/\n|\r\n?/", "", $file);
-        // Remove Create table portion - up to first (
-        $file = preg_replace("/^[^\(]+/", "", $file);
-        // Remove first and last parenthesis
-        $file = trim($file, "()");
+        $file = $this->cleanTable($file);
 
         if ($this->verboseMode)
         {
