@@ -1,0 +1,17 @@
+Extra SQLcode: GRANT ALTER , DELETE , INDEX , INSERT , REFERENCES , SELECT , UPDATE
+                        ON Test OPTION ;
+                        
+                        CREATE TABLE CGCLABS.TEST_TABLE_123 (
+                            GRP_ID FOR COLUMN UGGRPID    NUMERIC(5, 0) GENERATED ALWAYS AS IDENTITY (
+                            START WITH 1 INCREMENT BY 1
+                            NO MINVALUE NO MAXVALUE
+                            NO CYCLE NO ORDER
+                            CACHE 20 )
+                                ,
+                            GROUP_NAME FOR COLUMN UGGRPNAME  CHAR(75) CCSID 37 NOT NULL DEFAULT '' ,
+                            GROUP_DESCRIPTION FOR COLUMN UGGRPDESC  VARCHAR(255) CCSID 37 NOT NULL DEFAULT '' )
+
+                        RCDFMT F123_U00001 ;
+
+                        GRANT ALTER , DELETE , INDEX , INSERT , REFERENCES , SELECT , UPDATE
+                        ON teststststtsts WITH GRANT OPTION ;  
