@@ -1,0 +1,43 @@
+<?PHP
+
+namespace App\Entities;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+* @ORM\Entity
+* @ORM\Table(name="CGCLABS.TEST_TABLE_123")
+class TestTable123
+{
+    /**
+    * @ORM\Column(name="GRP_ID", type="integer")
+    */
+    protected $GRP_ID;
+
+    /**
+    * @ORM\Column(name="GROUP_NAME", type="string", length=75)
+    */
+    protected $GROUP_NAME;
+
+    /**
+    * @ORM\Column(name="GROUP_DESCRIPTION", type="string", length=255)
+    */
+    protected $GROUP_DESCRIPTION;
+
+
+    /**
+     * Get array copy of object
+     *
+     * @return array
+     */
+    public function getArrayCopy()
+    {
+        $array1 = array();
+        foreach ($this as $k => $v)
+        {
+            $array1[$k] = Encoding::toUTF8(trim($v));
+        }
+        return $array1;
+    }
+
+}
