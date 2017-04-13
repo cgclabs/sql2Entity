@@ -107,61 +107,67 @@ class sql2Entity
         {
             echo "\t\tFull table sql: " . $file . "\n\n";
         }
+
+        // split up columns
         $dataArray = preg_split("/,(?=[^)]*(?:[(]|$))/", $file);
 
         foreach ($dataArray as $line) {
-            $line = trim($line);
-            if ($this->verboseMode)
-            {
-                echo "\t\tProcessing Line: " . $line . "\n";
-            }
-
-            //remove SQL comments
-            $line = preg_replace("/(--.*)/", "", $line);
-
-            // move each line into an associative array
-            // ignore "for column" and the word that follows
-            preg_match('/(for column \w+\s+)/is', $line, $saved);
-            if (isset($saved[0]))
-            {
-                $line = str_replace($saved[0], '', $line);
-            }
-
-            $line_good = false;
-            $line_array = explode(' ',trim($line));
-
-            $column_name = trim($line_array[0],'"');
-
-
-            foreach ($this->conversions as $real_type => $new_type)
-            {
-                $column_type_loc = stripos($line_array[1], $real_type);
-                if ($column_type_loc !== false)
-                {
-                    $line_good = true;
-                    $column_type = $new_type;
-                    // find column length
-                    preg_match("/\(([A-Za-z0-9 ,]+?)\)/", $line_array[1], $column_l);
-                    if (isset($column_l[1]))
-                    {
-                        $column_length = $column_l[1];
-                    }
-                    else
-                    {
-                        $column_length = '';
-                    }
-                    break;
-                }
-            }
-
-            if ($line_good)
-            {
-                $this->fieldLine[] = array('name'=>$column_name, 'length'=>$column_length, 'type'=>$column_type);
-            }
+            $this->processColumn($line);
         }
 
         $this->generatePHP();
         $this->writeEntityFile();
+    }
+
+    private function processColumn($line)
+    {
+        $line = trim($line);
+        if ($this->verboseMode)
+        {
+            echo "\t\tProcessing Line: " . $line . "\n";
+        }
+
+        //remove SQL comments
+        $line = preg_replace("/(--.*)/", "", $line);
+
+        // move each line into an associative array
+        // ignore "for column" and the word that follows
+        preg_match('/(for column \w+\s+)/is', $line, $saved);
+        if (isset($saved[0]))
+        {
+            $line = str_replace($saved[0], '', $line);
+        }
+
+        $line_good = false;
+        $line_array = explode(' ',trim($line));
+
+        $column_name = trim($line_array[0],'"');
+
+        foreach ($this->conversions as $real_type => $new_type)
+        {
+            $column_type_loc = stripos($line_array[1], $real_type);
+            if ($column_type_loc !== false)
+            {
+                $line_good = true;
+                $column_type = $new_type;
+                // find column length
+                preg_match("/\(([A-Za-z0-9 ,]+?)\)/", $line_array[1], $column_l);
+                if (isset($column_l[1]))
+                {
+                    $column_length = $column_l[1];
+                }
+                else
+                {
+                    $column_length = '';
+                }
+                break;
+            }
+        }
+
+        if ($line_good)
+        {
+            $this->fieldLine[] = array('name'=>$column_name, 'length'=>$column_length, 'type'=>$column_type);
+        }
     }
 
     private function generatePHP()
