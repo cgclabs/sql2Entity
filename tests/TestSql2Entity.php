@@ -32,10 +32,13 @@ class sql2EntityTest extends PHPUnit_Framework_TestCase {
     {
         return array(
             array("test1_input.txt","test1_output.txt"),
-            //array('test 2, variable one', 'test 2, variable two'),
-            //array('test 3, variable one', 'test 3, variable two'),
-            //array('test 4, variable one', 'test 4, variable two'),
-            //array('test 5, variable one', 'test 5, variable two'),
         );
+    }
+    
+    public function testHelp()
+    {
+        $output = `./convertSQL.php --help 2>&1`;
+        $this->assertRegExp('/This is a command line PHP script that will create doctrine entity file/m', $output, 'no help message?' );
+        $this->assertRegExp('/Usage:/m', $output, 'no help message?' );
     }
 }
