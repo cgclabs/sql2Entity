@@ -8,6 +8,6 @@ CLI PHP script to convert an SQL file with create table statements to a Doctrine
 ```
 ./convertSQL.php <sql file> <output folder (optional)> <options>
 ```
-<options> can be -v for verbose mode. With the --help or -h options, you will get this help.
+```<options>``` can be -v for verbose mode. With the --help or -h options, you will get this help.
 
 Output folder will default to the included generatedEntities folder.
