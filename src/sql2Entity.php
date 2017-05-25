@@ -17,6 +17,7 @@ class sql2Entity
         'varchar' => 'string',
         'char' => 'string',
         'numeric' => 'integer',
+        'integer' => 'integer',
         'timestamp' => 'datetime',
         'decimal' => 'decimal',
         'text' => 'text'
