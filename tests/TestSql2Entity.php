@@ -1,10 +1,11 @@
 <?php
 
-use CGCLabs\sql2Entity\sql2Entity,
-    org\bovigo\vfs\vfsStream,
-    org\bovigo\vfs\vfsStreamDirectory;
+use CGCLabs\sql2Entity\Sql2Entity;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 
-class sql2EntityTest extends PHPUnit_Framework_TestCase {
+class Sql2EntityTest extends PHPUnit_Framework_TestCase
+{
     /**
      ** @dataProvider providerTestCompleteSQL
      **/
@@ -19,14 +20,14 @@ class sql2EntityTest extends PHPUnit_Framework_TestCase {
             'to_output' => []
         ];
 
-        $root = vfsStream::setup('root',null,$structure);
+        $root = vfsStream::setup('root', null, $structure);
         $this->assertTrue($root->hasChild('to_read/input.sql'));
         
-        $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql',true,$root->url() . '/to_output/');
+        $sql2Entity = new Sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/');
         $sql2Entity->generateEntity();
 
         $this->assertTrue($root->hasChild('to_output/TestTable123.php'));
-        $this->assertEquals($root->getChild('to_output/TestTable123.php')->getContent(),$output);
+        $this->assertEquals($root->getChild('to_output/TestTable123.php')->getContent(), $output);
         $this->expectOutputRegex('/Found 1 tables to process/m');
         $this->expectOutputRegex('/tableSchema: CGCLABS/m');
         $this->expectOutputRegex('/entityName: TestTable123/m');
@@ -43,7 +44,7 @@ class sql2EntityTest extends PHPUnit_Framework_TestCase {
     public function testHelp()
     {
         $output = `./convertSQL.php --help 2>&1`;
-        $this->assertRegExp('/This is a command line PHP script that will create doctrine entity file/m', $output, 'no help message?' );
-        $this->assertRegExp('/Usage:/m', $output, 'no help message?' );
+        $this->assertRegExp('/This is a command line PHP script that will create doctrine entity file/m', $output, 'no help message?');
+        $this->assertRegExp('/Usage:/m', $output, 'no help message?');
     }
 }
