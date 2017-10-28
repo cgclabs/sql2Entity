@@ -1,7 +1,7 @@
 <?php
 namespace CGCLabs\sql2Entity;
 
-class sql2Entity
+class Sql2Entity
 {
     protected $sqlinput;
     protected $phpFile;
@@ -23,7 +23,7 @@ class sql2Entity
         'text' => 'text'
     );
 
-    public function __construct($sqlinput, $verboseMode,$path)
+    public function __construct($sqlinput, $verboseMode, $path)
     {
         $this->sqlinput = $sqlinput;
         $this->verboseMode = $verboseMode;
@@ -44,23 +44,19 @@ class sql2Entity
     {
         $x = 0;
         preg_match_all("/(.*)\(((?>[^()]+)|(?R))*\)/", $file, $matches);
-        if ($this->verboseMode)
-        {
+        if ($this->verboseMode) {
             echo "Found ".count($matches[0]) . " tables to process\n";
         }
 
-        foreach ($matches[0] as $k => $table)
-        {   
+        foreach ($matches[0] as $k => $table) {
             $x++;
-            if ($this->verboseMode)
-            {
+            if ($this->verboseMode) {
                 echo "Processing Table #".$x.":\n";
             }
 
             $this->findTableInfo($table);
 
-            if ($this->verboseMode)
-            {
+            if ($this->verboseMode) {
                 echo "\ttableName: " . $this->tableName . "\n";
                 echo "\ttableSchema: " . $this->tableSchema . "\n";
                 echo "\tentityName: " . $this->entityName . "\n";
@@ -71,18 +67,15 @@ class sql2Entity
 
     private function findTableInfo($table_sql)
     {
-        preg_match_all("/(.*)^[^\(]*/",$table_sql,$name_matches);
+        preg_match_all("/(.*)^[^\(]*/", $table_sql, $name_matches);
         $the_name = strtoupper($name_matches[0][0]);
-        $the_name = str_replace('CREATE TABLE','',$the_name);
+        $the_name = str_replace('CREATE TABLE', '', $the_name);
         $the_name = trim($the_name);
-        $pieces = explode('.',$the_name);
-        if (count($pieces) == 2)
-        {
+        $pieces = explode('.', $the_name);
+        if (count($pieces) == 2) {
             $this->tableName = $pieces[1];
             $this->tableSchema = $pieces[0];
-        }
-        else
-        {
+        } else {
             $this->tableName = $pieces[0];
         }
 
@@ -104,8 +97,7 @@ class sql2Entity
     {
         $file = $this->cleanTable($file);
 
-        if ($this->verboseMode)
-        {
+        if ($this->verboseMode) {
             echo "\t\tFull table sql: " . $file . "\n\n";
         }
 
@@ -123,8 +115,7 @@ class sql2Entity
     private function processColumn($line)
     {
         $line = trim($line);
-        if ($this->verboseMode)
-        {
+        if ($this->verboseMode) {
             echo "\t\tProcessing Line: " . $line . "\n";
         }
 
@@ -134,39 +125,32 @@ class sql2Entity
         // move each line into an associative array
         // ignore "for column" and the word that follows
         preg_match('/(for column \w+\s+)/is', $line, $saved);
-        if (isset($saved[0]))
-        {
+        if (isset($saved[0])) {
             $line = str_replace($saved[0], '', $line);
         }
 
         $line_good = false;
-        $line_array = explode(' ',trim($line));
+        $line_array = explode(' ', trim($line));
 
-        $column_name = trim($line_array[0],'"');
+        $column_name = trim($line_array[0], '"');
 
-        foreach ($this->conversions as $real_type => $new_type)
-        {
+        foreach ($this->conversions as $real_type => $new_type) {
             $column_type_loc = stripos($line_array[1], $real_type);
-            if ($column_type_loc !== false)
-            {
+            if ($column_type_loc !== false) {
                 $line_good = true;
                 $column_type = $new_type;
                 // find column length
                 preg_match("/\(([A-Za-z0-9 ,]+?)\)/", $line_array[1], $column_l);
-                if (isset($column_l[1]))
-                {
+                if (isset($column_l[1])) {
                     $column_length = $column_l[1];
-                }
-                else
-                {
+                } else {
                     $column_length = '';
                 }
                 break;
             }
         }
 
-        if ($line_good)
-        {
+        if ($line_good) {
             $this->fieldLine[] = array('name'=>$column_name, 'length'=>$column_length, 'type'=>$column_type);
         }
     }
@@ -176,10 +160,9 @@ class sql2Entity
         $this->phpFile = '/**'."\n".'* @ORM\Entity'."\n".'* @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n";
         $this->phpFile .= 'class '.$this->entityName."\n".'{';
 
-        foreach ($this->fieldLine as $col_no => $column){
+        foreach ($this->fieldLine as $col_no => $column) {
             $this->phpFile .= "\n".'    /**'."\n".'    * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
-            if(!empty($column['length']))
-            {
+            if (!empty($column['length'])) {
                 $this->phpFile .= ', length='.$column['length'];
             }
             $this->phpFile .= ')'."\n";
@@ -188,8 +171,7 @@ class sql2Entity
 
         $fp = fopen($this->template, 'r') or die("Unable to open file!");
         $templateFile = fread($fp, filesize($this->template));
-        $this->phpFile = str_replace('{{ types }}',$this->phpFile, $templateFile);
-
+        $this->phpFile = str_replace('{{ types }}', $this->phpFile, $templateFile);
     }
 
     public function writeEntityFile()
