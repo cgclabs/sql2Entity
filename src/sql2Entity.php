@@ -1,7 +1,7 @@
 <?php
 namespace CGCLabs\sql2Entity;
 
-class Sql2Entity
+class sql2Entity
 {
     protected $sqlinput;
     protected $phpFile;

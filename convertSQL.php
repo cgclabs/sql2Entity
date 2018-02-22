@@ -27,7 +27,7 @@ if (in_array('-h', $argv) || in_array('--help', $argv)) {
             $verboseMode = 1;
         }
 
-        $converter = new Sql2Entity($file, $verboseMode, $output);
+        $converter = new sql2Entity($file, $verboseMode, $output);
         $converter->generateEntity();
     } else {
         echo "\nNo SQL file specified\n";
