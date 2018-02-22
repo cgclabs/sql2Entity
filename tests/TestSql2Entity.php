@@ -23,7 +23,7 @@ class Sql2EntityTest extends PHPUnit_Framework_TestCase
         $root = vfsStream::setup('root', null, $structure);
         $this->assertTrue($root->hasChild('to_read/input.sql'));
         
-        $sql2Entity = new Sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/');
+        $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/');
         $sql2Entity->generateEntity();
 
         $this->assertTrue($root->hasChild('to_output/TestTable123.php'));
