@@ -1,6 +1,6 @@
 <?php
 
-use CGCLabs\sql2Entity\Sql2Entity;
+use CGCLabs\sql2Entity\sql2Entity;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 
@@ -22,7 +22,7 @@ class Sql2EntityTest extends PHPUnit_Framework_TestCase
 
         $root = vfsStream::setup('root', null, $structure);
         $this->assertTrue($root->hasChild('to_read/input.sql'));
-        
+
         $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/');
         $sql2Entity->generateEntity();
 
