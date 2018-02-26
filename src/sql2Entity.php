@@ -1,7 +1,7 @@
 <?php
 namespace CGCLabs\sql2Entity;
 
-class Sql2Entity
+class sql2Entity
 {
     protected $sqlinput;
     protected $phpFile;
@@ -16,6 +16,7 @@ class Sql2Entity
     protected $conversions = array(
         'varchar' => 'string',
         'char' => 'string',
+        'date' => 'datetime',
         'numeric' => 'integer',
         'integer' => 'integer',
         'timestamp' => 'datetime',
