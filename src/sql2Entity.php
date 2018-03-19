@@ -170,6 +170,9 @@ class sql2Entity
             $this->phpFile .= '    */'."\n".'    protected $'. $column['name'].";\n";
         }
 
+        // Clear table
+        $this->fieldLine = array();
+
         $fp = fopen($this->template, 'r') or die("Unable to open file!");
         $templateFile = fread($fp, filesize($this->template));
         $this->phpFile = str_replace('{{ types }}', $this->phpFile, $templateFile);
