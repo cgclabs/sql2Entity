@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 require __DIR__ . '/vendor/autoload.php';
-use CGCLabs\sql2Entity\Sql2Entity;
+use CGCLabs\sql2Entity\sql2Entity;
 
 if (in_array('-h', $argv) || in_array('--help', $argv)) {
     ?>
@@ -14,7 +14,7 @@ if (in_array('-h', $argv) || in_array('--help', $argv)) {
 
     <?php
 } else {
-    $verboseeMode = 0;
+    $verboseMode = 0;
     $output = 'generatedEntities/';
 
     if (isset($argv[1])) {
