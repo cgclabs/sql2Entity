@@ -11,19 +11,21 @@ use Doctrine\ORM\Mapping as ORM;
 class TestTable123
 {
     /**
+    * @ORM\Id
     * @ORM\Column(name="GRP_ID", type="integer")
     */
-    protected $GRP_ID;
+    private $GRP_ID;
 
     /**
+    * @ORM\Id
     * @ORM\Column(name="GROUP_NAME", type="string", length=75)
     */
-    protected $GROUP_NAME;
+    private $GROUP_NAME;
 
     /**
     * @ORM\Column(name="GROUP_DESCRIPTION", type="string", length=255)
     */
-    protected $GROUP_DESCRIPTION;
+    private $GROUP_DESCRIPTION;
 
 
     /**
