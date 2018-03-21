@@ -11,6 +11,7 @@ class sql2Entity
     protected $tableSchema;
     protected $path;
     protected $fieldLine = array();
+    protected $primaryKeys = array();
 
 
     protected $conversions = array(
@@ -134,6 +135,13 @@ class sql2Entity
         $line_array = explode(' ', trim($line));
 
         $column_name = trim($line_array[0], '"');
+        if (stripos($column_name, 'primary') !== false) {
+            $second_word = trim($line_array[1], '"');
+            if (stripos($second_word, 'key') !== false) {
+                preg_match('/\((.*?)\)/', $line, $p_keys);
+                $this->primaryKeys = explode(',', str_replace(' ', '', $p_keys[1]));
+            }
+        }
 
         foreach ($this->conversions as $real_type => $new_type) {
             $column_type_loc = stripos($line_array[1], $real_type);
@@ -162,12 +170,16 @@ class sql2Entity
         $this->phpFile .= 'class '.$this->entityName."\n".'{';
 
         foreach ($this->fieldLine as $col_no => $column) {
-            $this->phpFile .= "\n".'    /**'."\n".'    * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
+            $this->phpFile .= "\n".'    /**'."\n";
+            if (in_array($column['name'], $this->primaryKeys)) {
+                $this->phpFile .= '    * @ORM\Id' . "\n";
+            }
+            $this->phpFile .= '    * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
             if (!empty($column['length'])) {
                 $this->phpFile .= ', length='.$column['length'];
             }
             $this->phpFile .= ')'."\n";
-            $this->phpFile .= '    */'."\n".'    protected $'. str_replace('#', '', $column['name']) .";\n";
+            $this->phpFile .= '    */'."\n".'    private $'. str_replace('#', '', $column['name']) .";\n";
         }
 
         // Clear table
