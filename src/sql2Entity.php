@@ -158,7 +158,7 @@ class sql2Entity
 
     private function generatePHP()
     {
-        $this->phpFile = '/**'."\n".'* @ORM\Entity'."\n".'* @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n";
+        $this->phpFile = '/**'."\n".'* @ORM\Entity'."\n".'* @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n" . '*/' . "\n";
         $this->phpFile .= 'class '.$this->entityName."\n".'{';
 
         foreach ($this->fieldLine as $col_no => $column) {
@@ -167,7 +167,7 @@ class sql2Entity
                 $this->phpFile .= ', length='.$column['length'];
             }
             $this->phpFile .= ')'."\n";
-            $this->phpFile .= '    */'."\n".'    protected $'. $column['name'].";\n";
+            $this->phpFile .= '    */'."\n".'    protected $'. str_replace('#', '', $column['name']) .";\n";
         }
 
         // Clear table
