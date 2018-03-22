@@ -5,6 +5,7 @@ class sql2Entity
 {
     protected $sqlinput;
     protected $phpFile;
+    protected $phpFileGetters;
     protected $template = 'entityTemplate';
     protected $entityName = '';
     protected $tableName;
@@ -166,20 +167,32 @@ class sql2Entity
 
     private function generatePHP()
     {
-        $this->phpFile = '/**'."\n".'* @ORM\Entity'."\n".'* @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n" . '*/' . "\n";
+        $this->phpFileGetters = '';
+        $this->phpFile = '/**'."\n".' * @ORM\Entity'."\n".' * @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n" . ' */' . "\n";
         $this->phpFile .= 'class '.$this->entityName."\n".'{';
 
         foreach ($this->fieldLine as $col_no => $column) {
+            $columnCC = str_replace(array(' ','#'), '', ucwords(strtolower(str_replace('_', ' ', $column['name']))));
             $this->phpFile .= "\n".'    /**'."\n";
             if (in_array($column['name'], $this->primaryKeys)) {
-                $this->phpFile .= '    * @ORM\Id' . "\n";
+                $this->phpFile .= '     * @ORM\Id' . "\n";
             }
-            $this->phpFile .= '    * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
+            $this->phpFile .= '     * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
             if (!empty($column['length'])) {
                 $this->phpFile .= ', length='.$column['length'];
             }
             $this->phpFile .= ')'."\n";
-            $this->phpFile .= '    */'."\n".'    private $'. str_replace('#', '', $column['name']) .";\n";
+            $this->phpFile .= '     */'."\n".'    private $'. $columnCC .";\n";
+
+            $this->phpFileGetters .= "\n" . '    /**'."\n";
+            $this->phpFileGetters .= '     * Get ' . $column['name']  . "\n";
+            $this->phpFileGetters .= '     *' . "\n";
+            $this->phpFileGetters .= '     * @ORM\return ' . $column['type'] . "\n";
+            $this->phpFileGetters .= '     */' . "\n";
+            $this->phpFileGetters .= '    public function get' . $columnCC . '()' . "\n";
+            $this->phpFileGetters .= '    {' . "\n";
+            $this->phpFileGetters .= '        return $this->' . $columnCC . ";\n";
+            $this->phpFileGetters .= '    }' . "\n";
         }
 
         // Clear table
@@ -188,6 +201,7 @@ class sql2Entity
         $fp = fopen($this->template, 'r') or die("Unable to open file!");
         $templateFile = fread($fp, filesize($this->template));
         $this->phpFile = str_replace('{{ types }}', $this->phpFile, $templateFile);
+        $this->phpFile = str_replace('{{ getters }}', $this->phpFileGetters, $this->phpFile);
     }
 
     public function writeEntityFile()

@@ -5,42 +5,56 @@ namespace App\Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity
-* @ORM\Table(name="CGCLABS.TEST_TABLE_123")
-*/
+ * @ORM\Entity
+ * @ORM\Table(name="CGCLABS.TEST_TABLE_123")
+ */
 class TestTable123
 {
     /**
-    * @ORM\Id
-    * @ORM\Column(name="GRP_ID", type="integer")
-    */
-    private $GRP_ID;
-
-    /**
-    * @ORM\Id
-    * @ORM\Column(name="GROUP_NAME", type="string", length=75)
-    */
-    private $GROUP_NAME;
-
-    /**
-    * @ORM\Column(name="GROUP_DESCRIPTION", type="string", length=255)
-    */
-    private $GROUP_DESCRIPTION;
-
-
-    /**
-     * Get array copy of object
-     *
-     * @return array
+     * @ORM\Id
+     * @ORM\Column(name="GRP_ID", type="integer")
      */
-    public function getArrayCopy()
+    private $GrpId;
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(name="GROUP_NAME", type="string", length=75)
+     */
+    private $GroupName;
+
+    /**
+     * @ORM\Column(name="GROUP_DESCRIPTION", type="string", length=255)
+     */
+    private $GroupDescription;
+
+    /**
+     * Get GRP_ID
+     *
+     * @ORM\return integer
+     */
+    public function getGrpId()
     {
-        $array1 = array();
-        foreach ($this as $k => $v)
-        {
-            $array1[$k] = Encoding::toUTF8(trim($v));
-        }
-        return $array1;
+        return $this->GrpId;
+    }
+
+    /**
+     * Get GROUP_NAME
+     *
+     * @ORM\return string
+     */
+    public function getGroupName()
+    {
+        return $this->GroupName;
+    }
+
+    /**
+     * Get GROUP_DESCRIPTION
+     *
+     * @ORM\return string
+     */
+    public function getGroupDescription()
+    {
+        return $this->GroupDescription;
     }
 
 }
