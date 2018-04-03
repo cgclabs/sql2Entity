@@ -4,21 +4,5 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 
-{{ types }}
-
-    /**
-     * Get array copy of object
-     *
-     * @return array
-     */
-    public function getArrayCopy()
-    {
-        $array1 = array();
-        foreach ($this as $k => $v)
-        {
-            $array1[$k] = Encoding::toUTF8(trim($v));
-        }
-        return $array1;
-    }
-
+{{ types }}{{ getters }}
 }
