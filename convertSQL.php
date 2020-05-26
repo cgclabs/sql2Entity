@@ -15,11 +15,12 @@ if (in_array('-h', $argv) || in_array('--help', $argv)) {
     <?php
 } else {
     $verboseMode = 0;
+    $ormMode = 0;
     $output = 'generatedEntities/';
 
     if (isset($argv[1])) {
         $file = $argv[1];
-        if (isset($argv[2]) && $argv[2] != '-v') {
+        if (isset($argv[2]) && $argv[2] != '-v' && $argv[2] != 'o') {
             $output = $argv[2];
         }
 
@@ -27,7 +28,11 @@ if (in_array('-h', $argv) || in_array('--help', $argv)) {
             $verboseMode = 1;
         }
 
-        $converter = new sql2Entity($file, $verboseMode, $output);
+        if (in_array('-o', $argv)) {
+            $ormMode = 1;
+        }
+
+        $converter = new sql2Entity($file, $verboseMode, $output, $ormMode);
         $converter->generateEntity();
     } else {
         echo "\nNo SQL file specified\n";

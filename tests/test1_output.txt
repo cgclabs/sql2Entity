@@ -2,59 +2,43 @@
 
 namespace App\Entities;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="CGCLABS.TEST_TABLE_123")
- */
 class TestTable123
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="GRP_ID", type="integer")
-     */
     private $GrpId;
-
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="GROUP_NAME", type="string", length=75)
-     */
     private $GroupName;
-
-    /**
-     * @ORM\Column(name="GROUP_DESCRIPTION", type="string", length=255)
-     */
     private $GroupDescription;
 
-    /**
-     * Get GRP_ID
-     *
-     * @ORM\return integer
-     */
     public function getGrpId()
     {
         return $this->GrpId;
     }
 
-    /**
-     * Get GROUP_NAME
-     *
-     * @ORM\return string
-     */
+    public function setGrpId($grpid)
+    {
+        $this->GrpId = $grpid;
+        return $this;
+    }
+
     public function getGroupName()
     {
         return $this->GroupName;
     }
 
-    /**
-     * Get GROUP_DESCRIPTION
-     *
-     * @ORM\return string
-     */
+    public function setGroupName($groupname)
+    {
+        $this->GroupName = $groupname;
+        return $this;
+    }
+
     public function getGroupDescription()
     {
         return $this->GroupDescription;
+    }
+
+    public function setGroupDescription($groupdescription)
+    {
+        $this->GroupDescription = $groupdescription;
+        return $this;
     }
 
 }
