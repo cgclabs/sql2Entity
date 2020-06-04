@@ -23,7 +23,11 @@ class Sql2EntityTest extends PHPUnit_Framework_TestCase
         $root = vfsStream::setup('root', null, $structure);
         $this->assertTrue($root->hasChild('to_read/input.sql'));
 
-        $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/');
+        if ($output_file == 'test1_output_orm.txt') {
+            $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/', 1);
+        } else {
+            $sql2Entity = new sql2Entity($root->url() . '/to_read/input.sql', true, $root->url() . '/to_output/', 0);
+        }
         $sql2Entity->generateEntity();
 
         $this->assertTrue($root->hasChild('to_output/TestTable123.php'));
@@ -38,6 +42,7 @@ class Sql2EntityTest extends PHPUnit_Framework_TestCase
     {
         return array(
             array("test1_input.txt","test1_output.txt"),
+            array("test1_input.txt","test1_output_orm.txt"),
         );
     }
 

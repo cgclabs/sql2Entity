@@ -11,6 +11,8 @@ class sql2Entity
     protected $tableName;
     protected $tableSchema;
     protected $path;
+    protected $ormMode;
+    protected $verboseMode;
     protected $fieldLine = array();
     protected $primaryKeys = array();
 
@@ -26,11 +28,12 @@ class sql2Entity
         'text' => 'text'
     );
 
-    public function __construct($sqlinput, $verboseMode, $path)
+    public function __construct($sqlinput, $verboseMode, $path, $ormMode)
     {
         $this->sqlinput = $sqlinput;
         $this->verboseMode = $verboseMode;
         $this->path = $path;
+        $this->ormMode = $ormMode;
     }
 
     public function generateEntity()
@@ -167,32 +170,59 @@ class sql2Entity
 
     private function generatePHP()
     {
-        $this->phpFileGetters = '';
-        $this->phpFile = '/**'."\n".' * @ORM\Entity'."\n".' * @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n" . ' */' . "\n";
+        $this->phpFileSettersGetters = '';
+        $this->phpFile = '';
+        if ($this->ormMode) {
+            $this->phpFile .= "use Doctrine\ORM\Mapping as ORM;\n\n";
+            $this->phpFile .= '/**'."\n".' * @ORM\Entity'."\n".' * @ORM\Table(name="'.$this->tableSchema . '.' . $this->tableName.'")'."\n" . ' */' . "\n";
+        }
         $this->phpFile .= 'class '.$this->entityName."\n".'{';
 
+        if (!$this->ormMode) {
+            $this->phpFile .= "\n";
+        }
         foreach ($this->fieldLine as $col_no => $column) {
             $columnCC = str_replace(array(' ','#'), '', ucwords(strtolower(str_replace('_', ' ', $column['name']))));
-            $this->phpFile .= "\n".'    /**'."\n";
-            if (in_array($column['name'], $this->primaryKeys)) {
-                $this->phpFile .= '     * @ORM\Id' . "\n";
+            if ($this->ormMode) {
+                $this->phpFile .= "\n".'    /**'."\n";
+                if (in_array($column['name'], $this->primaryKeys)) {
+                    $this->phpFile .= '     * @ORM\Id' . "\n";
+                }
+                $this->phpFile .= '     * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
+                if (!empty($column['length'])) {
+                    $this->phpFile .= ', length='.$column['length'];
+                }
+                $this->phpFile .= ')'."\n";
+                $this->phpFile .= '     */'."\n";
             }
-            $this->phpFile .= '     * @ORM\Column(name="'.$column['name'].'", type="'.$column['type'].'"';
-            if (!empty($column['length'])) {
-                $this->phpFile .= ', length='.$column['length'];
-            }
-            $this->phpFile .= ')'."\n";
-            $this->phpFile .= '     */'."\n".'    private $'. $columnCC .";\n";
+            $this->phpFile .= '    private $'. $columnCC .";\n";
 
-            $this->phpFileGetters .= "\n" . '    /**'."\n";
-            $this->phpFileGetters .= '     * Get ' . $column['name']  . "\n";
-            $this->phpFileGetters .= '     *' . "\n";
-            $this->phpFileGetters .= '     * @ORM\return ' . $column['type'] . "\n";
-            $this->phpFileGetters .= '     */' . "\n";
-            $this->phpFileGetters .= '    public function get' . $columnCC . '()' . "\n";
-            $this->phpFileGetters .= '    {' . "\n";
-            $this->phpFileGetters .= '        return $this->' . $columnCC . ";\n";
-            $this->phpFileGetters .= '    }' . "\n";
+            if ($this->ormMode) {
+                $this->phpFileSettersGetters .= "\n" . '    /**'."\n";
+                $this->phpFileSettersGetters .= '     * Get ' . $column['name']  . "\n";
+                $this->phpFileSettersGetters .= '     *' . "\n";
+                $this->phpFileSettersGetters .= '     * @ORM\return ' . $column['type'] . "\n";
+                $this->phpFileSettersGetters .= '     */';
+            }
+            $this->phpFileSettersGetters .= "\n";
+            $this->phpFileSettersGetters .= '    public function get' . $columnCC . '()' . "\n";
+            $this->phpFileSettersGetters .= '    {' . "\n";
+            $this->phpFileSettersGetters .= '        return $this->' . $columnCC . ";\n";
+            $this->phpFileSettersGetters .= '    }' . "\n";
+
+            if ($this->ormMode) {
+                $this->phpFileSettersGetters .= "\n" . '    /**'."\n";
+                $this->phpFileSettersGetters .= '     * Set ' . $column['name']  . "\n";
+                $this->phpFileSettersGetters .= '     *' . "\n";
+                $this->phpFileSettersGetters .= '     * return ' . $this->entityName . "\n";
+                $this->phpFileSettersGetters .= '     */';
+            }
+            $this->phpFileSettersGetters .= "\n";
+            $this->phpFileSettersGetters .= '    public function set' . $columnCC . '($'.strtolower($columnCC).')' . "\n";
+            $this->phpFileSettersGetters .= '    {' . "\n";
+            $this->phpFileSettersGetters .= '        $this->' . $columnCC . ' = $' . strtolower($columnCC) . ";\n";
+            $this->phpFileSettersGetters .= '        return $this;' . "\n";
+            $this->phpFileSettersGetters .= '    }' . "\n";
         }
 
         // Clear table
@@ -201,7 +231,7 @@ class sql2Entity
         $fp = fopen($this->template, 'r') or die("Unable to open file!");
         $templateFile = fread($fp, filesize($this->template));
         $this->phpFile = str_replace('{{ types }}', $this->phpFile, $templateFile);
-        $this->phpFile = str_replace('{{ getters }}', $this->phpFileGetters, $this->phpFile);
+        $this->phpFile = str_replace('{{ getters }}', $this->phpFileSettersGetters, $this->phpFile);
     }
 
     public function writeEntityFile()
