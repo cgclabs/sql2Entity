@@ -23,6 +23,9 @@ class sql2Entity
         'date' => 'datetime',
         'numeric' => 'integer',
         'integer' => 'integer',
+        'int' => 'integer',
+        'tinyint' => 'integer',
+        'bigint' => 'integer',
         'timestamp' => 'datetime',
         'decimal' => 'decimal',
         'text' => 'text'
